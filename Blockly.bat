@@ -1,0 +1,1 @@
+C:\Blockly-AI-Program\.venv\Scripts\python.exe C:\Blockly-AI-Program\go.py

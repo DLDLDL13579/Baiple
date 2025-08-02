@@ -1,0 +1,1 @@
+"C:\ProgramData\Anaconda3\Scripts\labelimg.exe"

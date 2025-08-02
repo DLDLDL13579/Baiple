@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html>
+
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width,initial-scale=1.0" />
+	    <meta name="viewport" content="target-densitydpi=device-dpi, height=660, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <script src="/static/js/blockly_compressed.js"></script>
+  <script src="/static/js/blocks_compressed39.js"></script>
+  <script src="/static/js/javascript_compressed.js"></script>
+  <script src="/static/js/python_compressed.js"></script>
+  <script src="/static/js/php_compressed.js"></script>
+  <script src="/static/js/cake_compressed.js"></script>
+  <script src="/static/msg/js/zh-hans.js"></script>
+  <script src="/static/js/ai_blocks.js" ></script>
+  <script type=text/javascript src=/static/js/FileSaver.js></script>
+  <script src="/static/js/save.js" ></script>
+
+<script src="/static/js/sound_blocks.js" ></script>
+    <script type=text/javascript src=/static/js/jquery-2.1.1.min.js></script>
+    <script type=text/javascript src=/static/js/wfactory_init.js></script>
+<script src="/static/qwebchannel.js"></script>
+    <link rel="stylesheet" type="text/css" href="/static/css/jquery.terminal.css">
+ <link rel="stylesheet" type="text/css" href="/static/css/prettify.css">
+    <link rel="stylesheet" type="text/css" href="/static/css/style.css">
+        <!-- 引入 ElementPlus CSS -->
+		<link rel="stylesheet" href="/static/index.css">
+        <link rel="stylesheet" type="text/css" href="/static/css/bootstrap.min.css">
+        	<!-- 引入 Vue 3 -->
+        <script src="/static/vue.global.min.js"></script>
+<style>
+/* ========== 代码显示优化 ========== */
+#code-wrapper .panel-body {
+  height: 80vh !important;
+  overflow-y: auto;
+  padding: 12px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+}
+
+#code {
+  white-space: pre-wrap !important;
+  word-break: break-word;
+  font-family: 'Courier New', monospace;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #2c3e50;
+  margin: 0;
+}
+
+@media (max-width: 768px) {
+  #code-wrapper .panel-body { height: 50vh !important; }
+  #code { font-size: 13px; }
+}
+</style>
+		<!-- 引入 ElementPlus JavaScript -->
+        <script src="/static/index.full.js"></script>
+
+		<title>Baiple</title>
+	</head>
+	<body  onload="start()">
+		<div id="app" >
+              <el-menu :default-active="activeIndex" style="height:30px;" class="el-menu-demo" @select="handleSelect"
+				:default-active="activeMenu" mode="horizontal">
+				<el-sub-menu index="1" style="width:85px;">
+					<template #title>文件</template>
+					<el-menu-item @click="newXmlBlocks()" index="1-1">新建</el-menu-item>
+					<el-menu-item @click="loadXmlBlocks()" index="1-2">打开</el-menu-item>
+					<el-menu-item index="1-3">保存</el-menu-item>
+                    <el-menu-item index="1-4">退出</el-menu-item>
+				</el-sub-menu>
+                <el-sub-menu index="2" style="width:85px;">
+                    <template #title>编辑</template>
+						<el-menu-item index="2-1">清空</el-menu-item>
+						<el-menu-item index="2-2">撤销</el-menu-item>
+						<el-menu-item index="2-3">重做</el-menu-item>
+				</el-sub-menu>
+				 <el-sub-menu index="3" style="width:85px;">
+                    <template #title>生成</template>
+                        <el-menu-item index="3-1">代码生成</el-menu-item>
+						<el-menu-item index="3-2">代码下载</el-menu-item>
+						<el-menu-item index="3-3">代码导入</el-menu-item>
+				</el-sub-menu>
+                 <el-sub-menu index="4"style="width:85px;">
+                    <template #title>运行</template>
+						<el-menu-item index="4-1">运行</el-menu-item>
+                     <el-menu-item index="4-2">后台运行</el-menu-item>
+				</el-sub-menu>
+                 <el-sub-menu index="5" style="width:85px;">
+                    <template #title>设置</template>
+						<el-menu-item index="5-1">背景设置</el-menu-item>
+						<el-menu-item index="5-2">选项</el-menu-item>
+				</el-sub-menu>
+                 <el-sub-menu index="6" style="width:85px;">
+                    <template #title>语言</template>
+						<el-menu-item index="6-1">英文</el-menu-item>
+						<el-menu-item index="6-2">中文</el-menu-item>
+				</el-sub-menu>
+                 <el-sub-menu index="7" style="width:85px;">
+                    <template #title>帮助</template>
+						<el-menu-item index="7-1">帮助</el-menu-item>
+						<el-menu-item index="7-2">关于</el-menu-item>
+				</el-sub-menu>
+			</el-menu>
+            <div class="h-6" />
+		</div>
+        <div><table style="width:100%;padding:0px 0px 0px 0px;background-color:#EEF5FD;"><tr><td>
+                        </td><td><button  title="新建"style="color:#83D4FB;border:none;background-color:transparent;width:20px;" type="button"  onclick="newXmlBlocks()">
+                            <span class="glyphicon glyphicon-file"></span>
+                        </button>
+                        </td><td><button title="打开" style="color:#FFA500;border:none;background-color:transparent;width:20px;" type="button"  onclick="loadXmlBlocks()">
+                            <span class="glyphicon glyphicon-folder-open"></span>
+                        </button><input type="file" id="load" style="display: none;" />
+                        </td><td><button title="保存" type="button" style="color:#4169E1;border:none;background-color:transparent;width:20px;"  onclick="saveXmlBlocks()">
+                            <span class="glyphicon glyphicon-floppy-disk"></span>
+                        </button>
+		                </td><td><button title="清空"style="border:none;background-color:transparent;width:20px;" type="button"  onclick="discard()">
+                            <span class="glyphicon glyphicon-trash"></span>
+                        </button>
+                        </td><td>
+                       </td><td><button  title="运行" type="button" style="color: green;border:none;background-color:transparent;width:20px;"  onclick="runCode()">
+                            <span class="glyphicon glyphicon-play"></span>
+                        </button>
+                       </td><td> <button title="下载代码"  style="color:#387FD2;border:none;background-color:transparent;width:20px;"  type="button"  onclick="downloadCode()">
+                            <span class="glyphicon glyphicon-download-alt"></span>
+                        </button> <td>
+                       </td>
+                        </td><td><button title="背景设置" style="color:#43C678;border:none;background-color:transparent;width:20px;"  type="button"  onclick="loadbackground()">
+                            <span class="glyphicon glyphicon-picture"></span>
+                        </button><input type="file" id="bgFile" style="display: none;"/>
+                         </td><td style="width:100%;text-align:right;"><input id="program_name" class="navbar-brand program_name" style="height:10px;visibility:hidden;" type="text" value="newblockly.xml">
+                            &nbsp;&nbsp;
+                            </td></tr></table>
+        </div>
+ <div class="container1">
+        <div id="main-wrapper" class="row">
+            <div class="col-xs-8" style="padding-left:15px;padding-right:2px;">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title">Blockly 工作区
+                    </div>
+                    <div id="blocklyDiv" class="panel-body"></div>
+                </div>
+            </div>
+<xml id="toolbox" style="display: none">
+<category name="基本活动">
+<category name="数据">
+<block type="math_number">
+      <field name="NUM">0</field>
+    </block>
+  <block type="text">
+      <field name="TEXT"></field><field name="NUM">0</field>
+    </block>
+    <block type="imagestest" >
+    </block>
+</category>
+<category name="变量"  custom="VARIABLE" >
+</category>
+    <category name="运算">
+    <block type="text_join">
+      <mutation items="2"></mutation>
+    </block>
+    <block type="math_arithmetic">
+      <field name="OP">ADD</field>
+      <value name="A">
+        <shadow type="math_number">
+          <field name="NUM">1</field>
+        </shadow>
+    </block>
+<block type="logic_compare">
+      <field name="OP">EQ</field>
+    </block>
+   <block type="logic_operation">
+      <field name="OP">AND</field>
+    </block>
+<block type="logic_negate"></block>
+    <block type="logic_boolean">
+      <field name="BOOL">TRUE</field>
+    </block>
+      <block type="math_round">
+      <field name="OP">ROUND</field>
+      <value name="NUM">
+        <shadow type="math_number">
+          <field name="NUM">3.1</field>
+        </shadow>
+      </value>
+    </block><block type="math_on_list">
+      <mutation op="SUM"></mutation>
+      <field name="OP">SUM</field>
+    </block>
+  </category>
+    <category name="输入" >
+        <block type="text_prompt_ext">
+      <mutation type="TEXT"></mutation>
+      <field name="TYPE">TEXT</field>
+      <value name="TEXT">
+        <shadow type="text">
+          <field name="TEXT">abc</field>
+        </shadow>
+      </value>
+    </block>
+
+        <block type="ai_loadFile"></block>
+    </category>
+    <category name="输出" >
+    <block type="text_print">
+      <value name="TEXT">
+        <shadow type="text">
+          <field name="TEXT">abc</field>
+        </shadow>
+      </value>
+    </block>
+     <block type="messagebox"></block>
+    <block type="ai_saveFile"></block>
+  </category>
+<category name="顺序">
+       <block type="doStatement"></block>
+</category>
+  <category name="选择" >
+    <block type="controls_if"></block>
+  </category>
+  <category name="循环">
+    <block type="controls_repeat_ext">
+      <value name="TIMES">
+        <shadow type="math_number">
+          <field name="NUM">10</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="controls_whileUntil">
+      <field name="MODE">WHILE</field>
+    </block>
+    <block type="controls_for">
+      <field name="VAR" id="8Z#Q3Rv9vqi9!kY}K6v#">i</field>
+      <value name="FROM">
+        <shadow type="math_number">
+          <field name="NUM">1</field>
+        </shadow>
+      </value>
+      <value name="TO">
+        <shadow type="math_number">
+          <field name="NUM">10</field>
+        </shadow>
+      </value>
+      <value name="BY">
+        <shadow type="math_number">
+          <field name="NUM">1</field>
+        </shadow>
+      </value>
+    </block>
+    <block type="controls_forEach">
+      <field name="VAR" id="p=#$)Ck}[gr{~nYTrX0V">j</field>
+    </block>
+    <block type="controls_flow_statements">
+      <field name="FLOW">BREAK</field>
+    </block>
+  </category>
+<category name="注释">
+    <block type="textcomment"></block>
+ </category>
+  <category name="函数"  custom="PROCEDURE"></category>
+  </category>
+</category>
+<category name="人工智能活动">
+    <category name="导入框架和库">
+        <block type="ai_framework"></block>
+        <block type="ai_import"></block>
+        <block type="doStatement"></block>
+    </category>
+    <category name="处理数据集">
+        <block type="ai_dataset"></block>
+        <block type="ai_datasetfromfile"></block>
+        <block type="ai_datasetfrompath"></block>
+        <block type="ai_loadFile"></block>
+        <block type="ai_saveFile"></block>
+    </category>
+    <category name="构建模型">
+        <block type="ai_buildmodel"></block>
+        <block type="doStatement"></block>
+    </category>
+    <category name="训练模型">
+        <block type="ai_trainmodel"></block>
+        <block type="doStatement"></block>
+    </category>
+     <category name="保存模型">
+          <block type="ai_savemodel"></block>
+         <block type="ai_loadmodel"></block>
+        <block type="doStatement"></block>
+
+    </category>
+    <category name="预测并评估模型">
+        <block type="ai_predictmodel"></block>
+        <block type="ai_predictfile"></block>
+        <block type="doStatement"></block>
+    </category>
+</category>
+                <category name="STM32活动">
+                    <category name="变量">
+                        <block type="variables_declare">
+                            <value name="VALUE">
+                                <block type="math_number">
+                                    <field name="NUM">1</field>
+                                </block>
+                            </value>
+                        </block>
+                        <block type="variables_get"></block>
+                        <block type="variables_set">
+                            <value name="VALUE">
+                                <block type="math_number">
+                                    <field name="NUM">1</field>
+                                </block>
+                            </value>
+                        </block>
+                    </category>
+                </category>
+                <category name="智能小车活动">
+                      <category name="变量">
+                        <block type="variables_declare">
+                            <value name="VALUE">
+                                <block type="math_number">
+                                    <field name="NUM">1</field>
+                                </block>
+                            </value>
+                        </block>
+                        <block type="variables_get"></block>
+                        <block type="variables_set">
+                            <value name="VALUE">
+                                <block type="math_number">
+                                    <field name="NUM">1</field>
+                                </block>
+                            </value>
+                        </block>
+                    </category>
+                </category>
+  <!-- 更多类别和块 -->
+</xml>
+<div class="col-xs-4" style="padding-left:0px;">
+                <div id="code-wrapper" class="panel panel-default">
+                    <div class="panel-heading">
+                        <table style="width:100%;"><tr><td> <h3 class="panel-title">生成&nbsp;<select id="code_menu" onchange = "renderContent()">
+                                    <option value="javascript">JavaScript</option>
+                                    <option value="python" selected="selected">Python</option>
+                                    <option value="cake">C</option>
+                                    <option value="php">PHP</option>
+                                    <option value="dart">dart</option>
+                                    <option value="lua">lua</option>
+                                    </select>&nbsp;语言代码</h3></td><td style="text-align:center;">&nbsp;&nbsp;
+                        <select id="SelectColor" style="padding-top:2px;padding-bottom:2px;">
+                            <option value="black" selected="selected">输出颜色</option>
+                            <option value="black">黑色</option>
+                            <option value="red">红色</option>
+                            <option value="blue">兰色</option>
+                            <option value="green">绿色</option>
+                            </select>
+                                        </td></tr></table>
+                    </div>
+                    <pre id="code" class="panel-body"></pre>
+                </div>
+            </div>
+   </div>
+</div>
+        <script type="text/javascript">
+            const {createApp} = Vue;
+
+            // Vue应用配置
+            const App = {
+                methods: {
+                    handleSelect(key) {
+                        switch (key) {
+                            case '1-1':
+                                newXmlBlocks();
+                                break;
+                            case '1-2':
+                                loadXmlBlocks();
+                                break;
+                            case '1-3':
+                                saveXmlBlocks();
+                                break;
+                            case '1-4':
+                                window.close();
+                                break;
+                            case '2-1':
+                                discard();
+                                break;
+                            case '2-2':
+                                undo();
+                                break;
+                            case '2-3':
+                                redo();
+                                break;
+                            case '3-1':
+                                renderContent();
+                                break;
+                            case '3-2':
+                                downloadCode();
+                                break;
+                            case '3-3':
+                                importCode();
+                                break;
+                            case '4-1':
+                                runCode();
+                                break;
+                            case '4-2':
+                                runInBackground();
+                                break;
+                            case '5-1':
+                                loadbackground();
+                                break;
+                            case '5-2':
+                                showOptions();
+                                break;
+                            case '6-1':
+                                setLanguage('en');
+                                break;
+                            case '6-2':
+                                setLanguage('zh');
+                                break;
+                            case '7-1':
+                                showHelp();
+                                break;
+                            case '7-2':
+                                showAbout();
+                                break;
+                        }
+                    }
+                }
+            };
+
+            const app = createApp(App);
+            app.use(ElementPlus);
+            app.mount('#app');
+
+            let workspace;
+
+            // 全屏功能
+            function openFullscreen() {
+                if (document.documentElement.requestFullscreen) {
+                    document.documentElement.requestFullscreen();
+                } else if (document.documentElement.mozRequestFullScreen) {
+                    document.documentElement.mozRequestFullScreen();
+                } else if (document.documentElement.webkitRequestFullscreen) {
+                    document.documentElement.webkitRequestFullscreen();
+                } else if (document.documentElement.msRequestFullscreen) {
+                    document.documentElement.msRequestFullscreen();
+                }
+            }
+
+            // 初始化Blockly
+            function start() {
+                workspace = Blockly.inject(document.getElementById("blocklyDiv"), {
+                    toolbox: document.getElementById("toolbox"),
+                    grid: {
+                        spacing: 25,
+                        length: 3,
+                        colour: '#ccc'
+                    },
+                    zoom: {
+                        controls: true,
+                        wheel: true
+                    }
+                });
+                openFullscreen();
+                workspace.addChangeListener(renderContent);
+            }
+
+            // 文件操作
+            function newXmlBlocks() {
+                if (confirm("确认新建？未保存内容将丢失！")) {
+                    workspace.clear();
+                    localStorage.removeItem('blocklyWorkspace');
+                }
+            }
+
+            function loadXmlBlocks() {
+                const input = document.createElement('input');
+                input.type = 'file';
+                input.accept = '.xml';
+                input.onchange = e => {
+                    const file = e.target.files[0];
+                    const reader = new FileReader();
+                    reader.onload = e => {
+                        try {
+                            Blockly.Xml.domToWorkspace(
+                                    Blockly.Xml.textToDom(e.target.result),
+                                    workspace
+                            );
+                        } catch (error) {
+                            alert(`文件加载失败: ${error.message}`);
+                        }
+                    };
+                    reader.readAsText(file);
+                };
+                input.click();
+            }
+
+            function saveXmlBlocks() {
+                const xml = Blockly.Xml.workspaceToDom(workspace);
+                const blob = new Blob([Blockly.Xml.domToPrettyText(xml)], {
+                    type: 'text/xml'
+                });
+                saveAs(blob, `project_${Date.now()}.xml`);
+            }
+
+            // 编辑功能
+            function discard() {
+                if (confirm("确认删除所有块？")) {
+                    workspace.clear();
+                    localStorage.removeItem('blocklyWorkspace');
+                }
+            }
+
+            function undo() {
+                workspace.undo();
+            }
+
+            function redo() {
+                workspace.redo();
+            }
+
+            // 代码生成
+            function renderContent() {
+                const generator = document.getElementById('code_menu').value;
+                const codeArea = document.getElementById('code');
+
+                const generators = {
+                    javascript: Blockly.JavaScript,
+                    python: Blockly.Python,
+                    cake: Blockly.cake,
+                    php: Blockly.PHP,
+                    dart: Blockly.Dart,
+                    lua: Blockly.Lua
+                };
+
+                codeArea.textContent = generators[generator].workspaceToCode(workspace);
+            }
+
+            function runCode() {
+                Blockly.JavaScript.INFINITE_LOOP_TRAP = 'checkTimeout();\n';
+                var timeouts = 0;
+                var checkTimeout = function () {
+                    if (timeouts++ > 1000000) {
+                        throw MSG['timeout'];
+                    }
+                };
+                var selectcolor = document.getElementById("SelectColor").value;
+
+                var bgfile = document.getElementById("bgFile").files;
+                if (bgfile.length == 0) {
+                    bgfile = "default.png";
+                } else {
+                    bgfile = bgfile[0].name;
+                }
+
+                var hcode = Blockly.JavaScript.workspaceToCode(workspace);
+                Blockly.JavaScript.INFINITE_LOOP_TRAP = null;
+
+                var left = (window.screen.width / 2) - 300;
+                var top = (window.screen.height / 2) - 100;
+                var pw = window.open('', '结果显示', 'height=200,width=400' + ',left=' + left + ',top=' + top);
+                hcode = hcode.replace(/document/g, "pw.document");
+
+                hcode = hcode.replace(/write\(/g, "write\(\'\<br/\>\'+");
+
+                hcode = "pw.document.write\(\'\<style\>body\{font-family:Times New Roman;color:" + selectcolor + ";line-height:10px;background-image:url\(images/" + bgfile + "\);background-repeat: no-repeat;\}\</style\>\<div id\=\"bgdiv\"\>\'\);" + hcode;
+                hcode = hcode + "pw.document.write\(\'\</div\>\'\)";
+                //var result = document.getElementById("result");
+                try {
+                    eval(hcode);
+                    //result.innerText = hcode;
+                } catch (e) {
+                    alert(e)
+                }
+            };
+async function runInBackground() {
+    let loadingWindow = null;
+    try {
+        const code = Blockly.Python.workspaceToCode(workspace);
+        loadingWindow = window.open('', '执行中...', 'width=300,height=200');
+
+        // 加载界面
+        loadingWindow.document.write(`
+            <style>
+                body {
+                    margin: 0;
+                    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+                    height: 100vh;
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    justify-content: center;
+                    font-family: Arial;
+                }
+                .loader {
+                    border: 5px solid #f3f3f3;
+                    border-radius: 50%;
+                    border-top: 5px solid #3498db;
+                    width: 40px;
+                    height: 40px;
+                    animation: spin 1s linear infinite;
+                }
+                .timer {
+                    font-size: 24px;
+                    color: #2c3e50;
+                    margin: 15px 0;
+                    font-weight: bold;
+                    text-shadow: 1px 1px 2px rgba(0,0,0,0.1);
+                }
+                .loading-text {
+                    color: #666;
+                    animation: pulse 1.5s infinite;
+                }
+                @keyframes spin {
+                    0% { transform: rotate(0deg); }
+                    100% { transform: rotate(360deg); }
+                }
+                @keyframes pulse {
+                    0% { opacity: 0.8; }
+                    50% { opacity: 1; }
+                    100% { opacity: 0.8; }
+                }
+            </style>
+            <div class="loader"></div>
+            <div class="timer" id="timer">0秒</div>
+            <div class="loading-text">代码执行中...</div>
+
+            <script>
+                (function() {
+                    const start = Date.now();
+                    const timerElement = document.getElementById('timer');
+                    const interval = setInterval(() => {
+                        const seconds = Math.floor((Date.now() - start) / 1000);
+                        const mins = Math.floor(seconds / 60);
+                        const secs = seconds % 60;
+                        timerElement.innerHTML = \`\${mins}分\${secs}秒\`;
+                        timerElement.style.color = \`hsl(\${seconds * 15}, 70%, 45%)\`;
+                    }, 1000);
+                })();
+            <\/script>
+        `);
+
+        const response = await fetch('/run_code', {
+            method: 'POST',
+            headers: {'Content-Type': 'application/json'},
+            body: JSON.stringify({code})
+        });
+
+        const result = await response.json();
+        loadingWindow.close();
+
+        const resultWindow = window.open('', '执行结果', 'width=800,height=600');
+        let content = `
+            <style>
+                body {
+                    font-family: Arial;
+                    padding: 20px;
+                    background: #f8f9fa;
+                }
+                pre {
+                    background: #fff;
+                    padding: 20px;
+                    border-radius: 8px;
+                    white-space: pre-wrap;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    border: 1px solid #dee2e6;
+                    overflow-x: auto;
+                }
+                .error {
+                    color: #dc3545;
+                    white-space: pre-wrap;  /* 新增：保留错误信息的换行 */
+                    background: #fff5f5;
+                }
+                .success {
+                    color: #28a745;
+                }
+                img {
+                    max-width: 100%;
+                    margin: 20px 0;
+                    border-radius: 8px;
+                    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+                }
+                .result-section {
+                    margin-bottom: 40px;
+                }
+                .title {
+                    font-size: 18px;
+                    color: #343a40;
+                    margin-bottom: 10px;
+                    font-weight: 600;
+                }
+            </style>
+            <div style="max-width: 800px; margin: 0 auto;">`;
+
+        // 显示图片
+         if (result.images && result.images.length > 0) {
+    content += `
+        <div class="result-section">
+            <div class="title">📷 生成图表（共 ${result.images.length} 张）</div>
+            <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px;">`;
+
+    // 遍历所有图片
+    result.images.forEach((imgData, index) => {
+        content += `
+                <div style="background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">
+                    <div style="color: #666; margin-bottom: 10px;">图表 ${index + 1}</div>
+                    <img
+                        src="data:image/png;base64,${imgData}"
+                        alt="生成图表 ${index + 1}"
+                        style="width: 100%; height: auto; border-radius: 4px; cursor: zoom-in;"
+                        onclick="this.style.transform = this.style.transform === 'scale(2)' ? 'scale(1)' : 'scale(2)'; this.style.transition = 'transform 0.3s'"
+                    >
+                </div>`;
+    });
+
+    content += `
+            </div>
+        </div>`;
+}
+        // 显示输出内容
+        if (result.output) {
+            content += `
+                <div class="result-section">
+                    <div class="title">📝 文本输出</div>
+                    <pre>${result.output}</pre>
+                </div>`;
+        } else if (result.success) {
+            content += `
+                <div class="result-section">
+                    <div class="title">✅ 执行成功</div>
+                    <pre class="success">程序执行完成，无文本输出</pre>
+                </div>`;
+        }
+
+        // 显示完整错误信息
+        if (result.error) {
+            content += `
+                <div class="result-section">
+                    <div class="title">❌ 运行错误</div>
+                    <pre class="error">${result.error.replace(/\n/g, '\n')}</pre>
+                </div>`;
+        }
+
+        content += '</div>';
+        resultWindow.document.write(content);
+        resultWindow.document.close();
+
+    } catch (error) {
+        if (loadingWindow && !loadingWindow.closed) {
+            loadingWindow.close();
+        }
+        const errorWindow = window.open('', '错误信息', 'width=600,height=400');
+        errorWindow.document.write(`
+            <style>
+                body { padding: 20px; font-family: Arial; }
+                pre {
+                    white-space: pre-wrap;
+                    background: #ffecec;
+                    padding: 15px;
+                    border-radius: 4px;
+                }
+            </style>
+            <h3 style="color: #dc3545">系统错误</h3>
+            <pre>${error.message}</pre>
+        `);
+    }
+}
+            function setLanguage(lang) {
+                console.log("切换到语言:", lang);
+                // 需要加载对应的语言包
+            }
+
+            function showHelp() {
+                window.open('/help.html', '_blank');
+            }
+
+            function showAbout() {
+                alert("Blockly IDE v1.0\n2025 Blockly All Rights Reserved");
+            }
+        </script>
+	</body>
+
+</html>
